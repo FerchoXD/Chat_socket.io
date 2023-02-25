@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat grupal con Socket.io</title>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <h1>Chat grupal con Socket.io</h1>
+    <form id="chat-form">
+      <input type="text" id="username" placeholder="Ingresa tu nombre de usuario" >
+      <input type="text" id="message" placeholder="Ingresa tu mensaje" >
+      <input type="file" id="image" accept="image/*">
+      <button type="button" id="set-username">Crear usuario</button>
+      <button type="button" id="send-message">Enviar mensaje</button>
+      <button type="button" id="send-image">Enviar imagen</button>
+    </form>
+    <ul id="messages"></ul>
+    <script>
+      var socket = io();
+      var usernameInput = document.getElementById('username');
+      var messageInput = document.getElementById('message');
+      var imageInput = document.getElementById('image');
+      var messagesList = document.getElementById('messages');
+      var users = [];
+
+      function addMessage(msg) {
+        var li = document.createElement('li');
+        li.textContent = msg;
+        messagesList.appendChild(li);
+      }
+
+      
+      function addImage(data, username) {
+        var li = document.createElement('li');
+        var img = document.createElement('img');
+        var usernameNode = document.createElement('span');
+        usernameNode.textContent = username + ':';
+        img.src = data;
+        li.appendChild(usernameNode);
+        li.appendChild(img);
+        messagesList.appendChild(li);
+      }
+
+      function setUsername() {
+  var username = usernameInput.value.trim();
+  if (username === '') {
+    alert('Por favor ingrese un nombre de usuario');
+    return;
+  }
+
+  // Enviar solicitud para comprobar si el nombre de usuario ya existe en el servidor
+  socket.emit('check username', username, function(usernameExists) {
+    if (usernameExists) {
+      alert('El nombre de usuario ya existe. Por favor ingrese otro.');
+      return;
+    }
+
+    // Agregar el nuevo usuario a la lista en el servidor
+    socket.emit('add user', username, function(success) {
+      if (!success) {
+        alert('No se pudo agregar el usuario en este momento. Por favor inténtelo de nuevo más tarde.');
+        return;
+      }
+
+      socket.emit('set username', username);
+      alert('Usuario creado: ' + username);
+
+      // Actualizar el HTML con el nombre de usuario
+      var usernameDisplay = document.createElement('span');
+      usernameDisplay.textContent = '"' + usernameInput.id + '": ' + username;
+      messagesList.appendChild(usernameDisplay);
+    });
+  });
+}
+
+
+      function sendMessage() {
+        var message = messageInput.value.trim();
+        var username = usernameInput.value.trim();
+        if (message && username) {
+          socket.emit('chat message', username + ': ' + message);
+          messageInput.value = '';
+        }
+      }
+
+      function sendImage(event) {
+  var file = event.target.files[0];
+  var reader = new FileReader();
+  reader.onload = function() {
+    var img = new Image();
+    img.src = reader.result;
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      canvas.width = 500;
+      canvas.height = 500;
+      ctx.drawImage(img, 0, 0, 500, 500);
+      var data = canvas.toDataURL('image/jpeg', 0.5); // convertimos a JPEG para reducir el tamaño de la imagen
+      socket.emit('chat image', { username: usernameInput.value.trim(), data: data });
+    };
+  };
+  reader.readAsDataURL(file);
+}
+
+
+      socket.on('connect', function() {
+        addMessage('Conectado al servidor');
+      });
+
+      socket.on('disconnect', function() {
+        addMessage('Desconectado del servidor');
+      });
+
+      socket.on('chat message', function(msg) {
+        addMessage(msg);
+      });
+
+      socket.on('chat image', function(data) {
+        addImage(data.data, data.username);
+      });
+
+      document.getElementById('set-username').addEventListener('click', setUsername);
+      document.getElementById('send-message').addEventListener('click', sendMessage);
+      document.getElementById('send-image').addEventListener('click', function() {
+        imageInput.click();
+      });
+
+      imageInput.addEventListener('change', sendImage);
+    </script>
+  </body>
+</html>
