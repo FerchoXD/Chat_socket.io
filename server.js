@@ -3,6 +3,7 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const fs = require('fs');
+const { Socket } = require('socket.io');
 const globalUsers = new Set();
 const cambio = [];
 const socketsP = new Map();
@@ -82,9 +83,17 @@ io.on('connection', function (socket) {
       return;
     }
     users.push(username); // agregar el nuevo usuario a la lista
-    callback(true); // indicar que se agregó el usuario correctamente
+    io.sockets.emit('users',users);
+    callback(true,users); // indicar que se agregó el usuario correctamente
   });
 
+  socket.on('disconnect' , function (data){
+    console.log('se desconecto un we')
+    console.log(data)
+    console.log (socket.nicknames)
+    users.splice(users.indexOf(data), 1);
+    io.sockets.emit('users',users);
+  })
   // otras funciones del socket.io...
 });
 

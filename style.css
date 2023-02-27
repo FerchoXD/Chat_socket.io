@@ -1,65 +1,130 @@
-body {
-    background-color: #e5e5e5;
-  }
-  
-  .login {
-    max-width: 500px;
-    margin: 0 auto;
-    background-color: #fff;
-    border-radius: 5px;
-    text-align: center;
-    margin-top: 80px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
-  }
-  
-  .login-header {
-    background-color: #fbf9f6;
-    padding: 30px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-  }
-  
-  .login-header h1 {
-    font-size: 28px;
-    margin-bottom: 20px;
-  }
-  
-  form {
-    padding: 20px;
-    text-align: left;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 18px;
-    color: #4d4d4d;
-  }
-  
-  input[type="text"] {
-    width: 100%;
-    padding: 15px;
-    margin-bottom: 20px;
-    border: none;
-    border-radius: 4px;
-    background-color: #f2f2f2;
-    font-size: 16px;
-  }
-  
-  button[type="button"] {
-    background-color: #ff7000;
-    color: #fff;
-    padding: 15px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 18px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: background-color 0.3s ease-in-out;
-  }
-  
-  button[type="button"]:hover {
-    background-color: #db5c00;
-  }
-  
+/*cerrar las demas pestañas*/
+#chats{
+  display: none;
+}
+
+#chat-form{
+  display: none;
+}
+
+#chat-privado{
+  display: none;
+}
+
+body{
+  margin: 0;
+}
+
+/*comienza login*/
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.chat-bubble {
+  background-color: #1abc9c;
+  border-radius: 30px;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  padding: 20px;
+  position: relative;
+  max-width: 500px;
+  width: 100%;
+}
+
+.LoginText {
+  margin-top: 0;
+}
+
+.formCreateUser {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.labelCreateUser {
+  font-weight: bold;
+}
+
+.InputCreateUser{
+  border-radius: 5px;
+  border: none;
+  outline: #1abc9c;
+  height: 30px;
+  padding: 5px;
+}
+
+.buttonCreateUser {
+  background-color: #fff;
+  border: none;
+  border-radius: 5px;
+  color: #1abc9c;
+  cursor: pointer;
+  font-weight: bold;
+  height: 40px;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.buttonCreateUser:hover {
+  background-color: #1abc9c;
+  color: #fff;
+}
+
+/*comienza css botones*/
+
+.chat-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40vh;
+  margin-top: 300px;
+}
+
+.formButtons {
+  margin-top: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat-button {
+  background-color: #1abc9c;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 10px;
+  transition: all 0.3s ease;
+  width: 200px;
+  margin-right: 10px;
+  flex-direction: column;
+}
+
+.chat-button:hover {
+  background-color: #148c7d;
+}
+
+.private-chat img,
+.group-chat img {
+  height: 60px;
+  margin-bottom: 10px;
+  width: 60px;
+}
+
+/*comienza chat grupal*/
+
+
+
+
+
+

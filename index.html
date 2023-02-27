@@ -4,29 +4,46 @@
 <head>
   <title>Chat grupal con Socket.io</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-cfZTsnT34jnSlvLtaVYhbgJLx8Wzz2VPtjr4fjKsJt9z8V7H1Ddy3qYNS2FL+fjzob">
   <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body>
   
-  <form action="" id="login_form">
-  <div class="login">
-    <div class="login-header">
-      <h1>iniciar sesion</h1>
-    </div>
+  <!-- inicia form login-->
   
-    <label for="username">Usuario:</label>
-    <input type="text" class = "" id="username" placeholder="Ingresa tu nombre de usuario">
-    <button type="button" id="set-username">Crear usuario</button>
- 
-</div>
-</form>
-  <form action="" id="chats">
-    <button type="button" onclick="grupal()">chat-grupal</button>
-    <button type="button" onclick="privado()">chat-privado</button>
+  <div class="login-container" id="cy">
+    <div class="chat-bubble">
+      <h1 class="LoginText">iniciar sesion</h1> 
+    <form id="login_form" class="formCreateUser">
+    
+    <label for="username" class="labelCreateUser">Usuario:</label>
+    <input type="text" class = "InputCreateUser" id="username" placeholder="Ingresa tu nombre de usuario">
+    <button type="button" id="set-username" class="buttonCreateUser">Crear usuario</button>
   </form>
+</div>
+</div> 
 
-  <form id="chat-form">
+
+
+<!-- termina form login-->
+
+<!--inicia buttons-->
+<div class="chat-buttons" id="chats">
+  <form class="formButtons">
+    <button type="button" onclick="grupal()"class="chat-button group-chat">
+      <img src="./images/chat_grupal muñecos blancos.jfif" alt="Icono de chat grupal">
+      Chat grupal
+    </button>
+    <button type="button" onclick="privado()"class="chat-button private-chat">
+      <img src="./images/chat_privado muñecos blancos.jfif" alt="Icono de chat privado">
+      Chat privado
+    </button>
+  </form>
+</div>
+
+<!--inicia buttons-->
+  <!--<form id="chat-form">
     <h1>chat grupal</h1>
     <input type="text" id="message" placeholder="Ingresa tu mensaje">
     <input type="file" id="image" accept="image/*">
@@ -34,8 +51,21 @@
     <button type="button" id="send-image" onclick="sendImage()">Enviar imagen</button>
     <button type="button" onclick="privado();">chat-privado</button>
   </form>
+-->
+
+<form id="chat-form">
+  <h1>chat grupal</h1>
+  <ul id="messages"></ul>
+  <div id="users-panel"></div>
+  <input type="text" id="message" placeholder="Ingresa tu mensaje">
+  <input type="file" id="image" accept="image/*">
+  <button type="button" id="send-message">Enviar mensaje</button>
+  <button type="button" id="send-image" onclick="sendImage()">Enviar imagen</button>
+  <button type="button" onclick="privado();">chat-privado</button>
+</form>
 
   <form id="chat-privado">
+    <div id="mensaje-container"></div>
     <h1>chat privado</h1>
     <input type="text" id="messageP" placeholder="Ingresa tu mensaje _ privado">
     <input type="file" id="imageP" accept="image/*">
@@ -45,7 +75,7 @@
     <button type="button" onclick="grupal();">chat-grupal</button>
   </form>
 
-  <ul id="messages"></ul>
+  
   <script>
     var socket = io();
     var usernameInput = document.getElementById('username');
@@ -100,6 +130,8 @@
 
         // Agregar el nuevo usuario a la lista en el servidor
         socket.emit('add user', username, function (success) {
+          console.log("hi perro: " + success);
+          console.log('el yusername: ' +username)
           if (!success) {
             alert('No se pudo agregar el usuario en este momento. Por favor inténtelo de nuevo más tarde.');
             return;
@@ -109,16 +141,20 @@
           alert('Usuario creado: ' + username);
 
 
-          document.getElementById('login_form').style.display = "none";
+          document.getElementById('cy').style.display = "none";
           document.getElementById('chats').style.display = "block";
+          document.getElementById('chat-form').style.display = "none";
+          document.getElementById('chat-privado').style.display = "none";
           // Actualizar el HTML con el nombre de usuario
-          var usernameDisplay = document.createElement('span');
-          usernameDisplay.textContent = '"' + usernameInput.id + '": ' + username;
-          messagesList.appendChild(usernameDisplay);
+          var usernameDisplay = document.createElement('label');
+          let leyenda = "tu nombre de usuario es";
+          let nombreUser = usernameDisplay.textContent = '"' + leyenda + '": ' + username;
+          document.getElementById("mensaje-container").innerHTML = nombreUser;
         });
       });
     }
 
+    
 
     function sendMessage() {
       var message = messageInput.value.trim();
@@ -209,11 +245,11 @@
       reader.readAsDataURL(file);*/
 
     socket.on('connect', function () {
-      addMessage('Conectado al servidor');
+      //addMessage('Conectado al servidor');
     });
 
     socket.on('disconnect', function () {
-      addMessage('Desconectado del servidor');
+      //addMessage('Desconectado del servidor');
     });
 
     socket.on('newMessagePrivate', (data) => {
@@ -230,6 +266,27 @@
       //addImagePrivate(data.data, data.username ,data.receptor);
     });
 
+    socket.on('users',function (data){
+      console.log('soy ese pe we')
+      console.log(data);
+      let html = '';
+      for (const element of data) {
+      html = html  + `<label>${element}</label><br>`
+      
+      }
+      document.getElementById('users-panel').innerHTML= html;
+
+      /*
+      for (const element of data) {
+        console.log(element)
+        const user = document.createElement('label');
+        document.getElementById('users-panel').appendChild(user);
+        user.innerText = element;
+      }*/
+      
+
+    })
+    
     socket.on('chat imagePrivate', function (file) {
       // Obtener el elemento contenedor donde se agregará la imagen
       const contenedor = document.getElementById("messages");
@@ -251,7 +308,7 @@
     var image = document.getElementById('send-image').files[0];
 
     function grupal() {
-      document.getElementById('login_form').style.display = "none";
+      document.getElementById('cy').style.display = "none";
       document.getElementById('chats').style.display = "none";
       document.getElementById('chat-privado').style.display = "none";
       document.getElementById('chat-form').style.display = "block";
