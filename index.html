@@ -4,6 +4,8 @@
 <head>
   <title>Chat grupal con Socket.io</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-cfZTsnT34jnSlvLtaVYhbgJLx8Wzz2VPtjr4fjKsJt9z8V7H1Ddy3qYNS2FL+fjzob">
   <script src="/socket.io/socket.io.js"></script>
 </head>
@@ -53,20 +55,26 @@
   </form>
 -->
 
-<form id="chat-form">
-  <h1>chat grupal</h1>
-  <ul id="messages"></ul>
-  <div id="users-panel"></div>
-  <input type="text" id="message" placeholder="Ingresa tu mensaje">
-  <input type="file" id="image" accept="image/*">
-  <button type="button" id="send-message">Enviar mensaje</button>
-  <button type="button" id="send-image" onclick="sendImage()">Enviar imagen</button>
-  <button type="button" onclick="privado();">chat-privado</button>
-</form>
+  <form id="chat-form">
+    <h1>Chat grupal</h1>
+    <div id="users-panel">  
+    </div>
+    <ul id="messages"></ul>
+    <input type="text" id="message" placeholder="Ingresa tu mensaje">
+    <input type="file" id="image" accept="image/*">
+    <button type="button" id="send-message">Enviar mensaje</button>
+    <button type="button" id="send-image" onclick="sendImage()">Enviar imagen</button>
+    <button type="button" onclick="privado();">Chat privado</button>
+  </form>
+      
+
 
   <form id="chat-privado">
     <div id="mensaje-container"></div>
     <h1>chat privado</h1>
+    <div id="users-panel">  
+    </div>
+    <ul id="messages"></ul>
     <input type="text" id="messageP" placeholder="Ingresa tu mensaje _ privado">
     <input type="file" id="imageP" accept="image/*">
     <input type="text" placeholder="a quien" id="receptor">
@@ -86,7 +94,7 @@
     var users = [];
 
     function addMessage(msg) {
-      var li = document.createElement('li');
+      var li = document.createElement('label');
       li.textContent = msg;
       messagesList.appendChild(li);
     }
@@ -218,7 +226,6 @@
       reader.readAsDataURL(archivo);
       reader.onloadend = function () {
         var base64 = reader.result;
-        console.log("---");
         socket.emit("send file private", {
           img: base64,
           receptor: $messageBox.val(),
